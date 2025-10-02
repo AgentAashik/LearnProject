@@ -19,7 +19,7 @@ public class LearnProjectApplication {
 		/* Loose coupling */
 		Passenger obj = context.getBean(Passenger.class);
 		obj.getTicket();
-		/* END Loose coupling */
+		/* END Loose coupling */ //
 
 	}
 
