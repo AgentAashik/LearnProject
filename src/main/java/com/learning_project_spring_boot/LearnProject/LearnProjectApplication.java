@@ -12,7 +12,7 @@ public class LearnProjectApplication {
 	public static void main(String[] args) {
 
 		ApplicationContext context = SpringApplication.run(LearnProjectApplication.class, args);
-		System.out.println("Hello World");
+		System.out.println("Hello There");
 
 	}
 
