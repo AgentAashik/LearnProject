@@ -9,7 +9,6 @@ public class StudentModel {
     private Integer marks;
     private String institution;
 
-    public StudentModel() {}
 
     public StudentModel(Integer id, String fullName, String branch, Integer marks, String institution) {
         this.id = id;

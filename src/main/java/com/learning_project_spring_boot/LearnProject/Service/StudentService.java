@@ -11,9 +11,13 @@ import java.util.stream.Collectors;
 @Service
 public class StudentService {
 
-    private List<StudentModel> database = new ArrayList<>();
+    private final List<StudentModel> database = new ArrayList<>();
+    private int nextId = 1;
 
     public boolean createStudent(StudentModel student) {
+        if (student.getId() == null) {
+            student.setId(nextId++);
+        }
         return database.add(student);
     }
 
@@ -32,7 +36,6 @@ public class StudentService {
 
         if (existingStudent.isPresent()) {
             StudentModel student = existingStudent.get();
-            student.setId(updatedData.getId());
             student.setFullName(updatedData.getFullName());
             student.setBranch(updatedData.getBranch());
             student.setMarks(updatedData.getMarks());
@@ -61,4 +64,3 @@ public class StudentService {
                 .collect(Collectors.toList());
     }
 }
-
