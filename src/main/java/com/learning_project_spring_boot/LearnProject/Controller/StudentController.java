@@ -2,9 +2,12 @@ package com.learning_project_spring_boot.LearnProject.Controller;
 
 import com.learning_project_spring_boot.LearnProject.Model.StudentModel;
 import com.learning_project_spring_boot.LearnProject.Service.StudentService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -14,13 +17,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/students")
+@Validated
 public class StudentController {
 
     @Autowired
     private StudentService service;
 
-    @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> createStudent(@RequestBody StudentModel student) {
+    @PostMapping("/addstudent")
+    public ResponseEntity<Map<String, String>> createStudent(@Valid @RequestBody StudentModel student) {
         Map<String, String> response = new HashMap<>();
 
         if (service.createStudent(student)) {
@@ -54,7 +58,10 @@ public class StudentController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Map<String, String>> updateStudent(@PathVariable Integer id, @RequestBody StudentModel student) {
+    public ResponseEntity<Map<String, String>> updateStudent(
+            @PathVariable Integer id,
+            @Valid @RequestBody StudentModel student) {
+
         Map<String, String> response = new HashMap<>();
 
         if (service.modifyStudent(id, student)) {
@@ -69,9 +76,18 @@ public class StudentController {
     }
 
     @PatchMapping("/rename/{id}")
-    public ResponseEntity<Map<String, String>> renameStudent(@PathVariable Integer id, @RequestBody Map<String, String> payload) {
+    public ResponseEntity<Map<String, String>> renameStudent(
+            @PathVariable Integer id,
+            @RequestBody Map<String, String> payload) {
+
         Map<String, String> response = new HashMap<>();
         String newName = payload.get("fullName");
+
+        if (newName == null || newName.trim().isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Full name cannot be blank");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
 
         if (service.updateFullName(id, newName)) {
             response.put("status", "success");
@@ -100,9 +116,12 @@ public class StudentController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<StudentModel>> searchByBranch(@RequestParam String branch) {
+    public ResponseEntity<List<StudentModel>> searchByBranch(
+            @RequestParam
+            @NotBlank(message = "Branch parameter cannot be blank")
+            String branch) {
+
         List<StudentModel> students = service.searchByBranch(branch);
         return ResponseEntity.ok(students);
     }
 }
-
