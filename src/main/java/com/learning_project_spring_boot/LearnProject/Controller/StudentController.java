@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/students")
+@CrossOrigin(origins = "http://localhost:3000")
 @Validated
 public class StudentController {
 
@@ -45,7 +46,7 @@ public class StudentController {
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable Integer id) {
+    public ResponseEntity<?> getStudentById(@RequestParam("id") Integer id) {
         Optional<StudentModel> student = service.findById(id);
 
         if (student.isPresent()) {

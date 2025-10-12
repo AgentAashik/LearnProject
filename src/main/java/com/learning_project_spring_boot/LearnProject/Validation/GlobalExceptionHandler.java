@@ -44,12 +44,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
+   /**@ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneralErrors(Exception ex) {
         Map<String, String> error = new HashMap<>();
         error.put("error", "An error occurred");
         error.put("message", ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    }**/
 }
