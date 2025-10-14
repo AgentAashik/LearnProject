@@ -1,24 +1,34 @@
 package com.learning_project_spring_boot.LearnProject.Model;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
-@Entity
-@Table(name = "students")
-public class StudentModel {
+public class StudentDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull(message = "ID cannot be null")
+    @Min(value = 1, message = "ID must be a positive number")
     private Integer id;
 
+    @NotBlank(message = "Full name cannot be blank")
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     private String fullName;
+
+    @NotBlank(message = "Branch cannot be blank")
+    @Size(min = 2, max = 50, message = "Branch must be between 2 and 50 characters")
     private String branch;
+
+    @NotNull(message = "Marks cannot be null")
+    @Min(value = 0, message = "Marks cannot be negative")
+    @Max(value = 100, message = "Marks cannot exceed 100")
     private Integer marks;
+
+    @NotBlank(message = "Institution cannot be blank")
+    @Size(min = 3, max = 150, message = "Institution name must be between 3 and 150 characters")
     private String institution;
 
-    public StudentModel() {
+    public StudentDTO() {
     }
 
-    public StudentModel(Integer id, String fullName, String branch, Integer marks, String institution) {
+    public StudentDTO(Integer id, String fullName, String branch, Integer marks, String institution) {
         this.id = id;
         this.fullName = fullName;
         this.branch = branch;
@@ -68,7 +78,7 @@ public class StudentModel {
 
     @Override
     public String toString() {
-        return "StudentModel{" +
+        return "StudentDTO{" +
                 "id=" + id +
                 ", fullName='" + fullName + '\'' +
                 ", branch='" + branch + '\'' +

@@ -28,15 +28,16 @@ public class StudentController {
     public ResponseEntity<Map<String, String>> createStudent(@Valid @RequestBody StudentModel student) {
         Map<String, String> response = new HashMap<>();
 
-        if (service.createStudent(student)) {
+        try {
+            service.createStudent(student);
             response.put("status", "success");
             response.put("message", "Student record created");
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Failed to create student");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-
-        response.put("status", "error");
-        response.put("message", "Failed to create student");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @GetMapping("/list")
@@ -46,7 +47,7 @@ public class StudentController {
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<?> getStudentById(@RequestParam("id") Integer id) {
+    public ResponseEntity<?> getStudentById(@PathVariable Integer id) {
         Optional<StudentModel> student = service.findById(id);
 
         if (student.isPresent()) {
@@ -65,15 +66,16 @@ public class StudentController {
 
         Map<String, String> response = new HashMap<>();
 
-        if (service.modifyStudent(id, student)) {
+        try {
+            service.modifyStudent(id, student);
             response.put("status", "success");
             response.put("message", "Student details updated");
             return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            response.put("status", "error");
+            response.put("message", "Student ID not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-
-        response.put("status", "error");
-        response.put("message", "Student ID not found");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @PatchMapping("/rename/{id}")
@@ -90,15 +92,16 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        if (service.updateFullName(id, newName)) {
+        try {
+            service.updateFullName(id, newName);
             response.put("status", "success");
             response.put("message", "Name updated successfully");
             return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            response.put("status", "error");
+            response.put("message", "Student not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-
-        response.put("status", "error");
-        response.put("message", "Student not found");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @DeleteMapping("/remove/{id}")
@@ -124,5 +127,27 @@ public class StudentController {
 
         List<StudentModel> students = service.searchByBranch(branch);
         return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/search/name")
+    public ResponseEntity<List<StudentModel>> searchByName(@RequestParam String name) {
+        List<StudentModel> students = service.findByFullNameContaining(name);
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/search/institution/{id}")
+    public ResponseEntity<?> findByIdAndInstitution(
+            @PathVariable Integer id,
+            @RequestParam String institution) {
+
+        Optional<StudentModel> student = service.findByIdAndInstitution(id, institution);
+
+        if (student.isPresent()) {
+            return ResponseEntity.ok(student.get());
+        }
+
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Student not found");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 }
